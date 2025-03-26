@@ -129,7 +129,7 @@ public class ResourcePictureController {
             map.put("title", resDescriptionVo.getTitle());
             map.put("specifications", resDescriptionVo.getSpecification());
             resDescriptionDtos.add(new ResDescriptionDto(
-                    resDescriptionVo.getId(),resDescriptionVo.getCountry(),resDescriptionVo.getCpbh(), resDescriptionVo.getLanguage(), map));
+                    resDescriptionVo.getId(),resDescriptionVo.getCountry(),resDescriptionVo.getCpbh(), resDescriptionVo.getLanguage(),resDescriptionVo.getSpecialOption(), map));
         }
 
         return new Result<>(200,resDescriptionDtos,"操作成功");

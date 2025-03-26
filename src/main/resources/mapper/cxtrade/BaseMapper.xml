@@ -4,16 +4,17 @@
 
     <select id="queryResourcePictureByCpbh" resultType="com.hooya.domain.vo.ResPictureVo">
         select
-               id,sku,country,urgencyCode,createByAuto,artImagePath,threeDPlatform,
-            Parent_UrgencyCode,laterStagePath,renderPath,checkState
+        id,sku,country,urgencyCode,createByAuto,artImagePath,threeDPlatform,
+        Parent_UrgencyCode,laterStagePath,renderPath,checkState
         from cxtrade.dbo.PM2_Art_Works
         <where>
-            ((COALESCE(CheckState, 0) != 10 and urgencyCode != 90 )or (urgencyCode = 90 and CheckState = 1)) and ArtImagePath IS NOT NULL and ArtImagePath != ''
+            ((COALESCE(CheckState, 0) != 10 and urgencyCode != 90 )or (urgencyCode = 90 and CheckState = 1)) and
+            ArtImagePath IS NOT NULL and ArtImagePath != ''
             <if test="cpbh != null and cpbh != '' ">
                 and sku like concat('%', #{cpbh}, '%')
             </if>
             <if test="cpbhList != null and cpbhList.size > 0">
-                and  sku in
+                and sku in
                 <foreach collection="cpbhList" item="cpbh" separator="," open="(" close=")">
                     #{cpbh}
                 </foreach>
@@ -49,12 +50,13 @@
         Parent_UrgencyCode,laterStagePath,renderPath,checkState,WAID,AmzyyUserID,AmzyyUserName
         from cxtrade.dbo.PM2_Art_Works
         <where>
-            COALESCE(CheckState, 0) != 10 and ArtImagePath IS NOT NULL and ArtImagePath != '' AND NodeId = '2999' AND WAID IS NOT NULL AND WAID != ''
+            COALESCE(CheckState, 0) != 10 and ArtImagePath IS NOT NULL and ArtImagePath != '' AND NodeId = '2999' AND
+            WAID IS NOT NULL AND WAID != ''
             <if test="cpbh != null and cpbh != '' ">
                 and sku like concat('%', #{cpbh}, '%')
             </if>
             <if test="cpbhList != null and cpbhList.size > 0">
-                and  sku in
+                and sku in
                 <foreach collection="cpbhList" item="cpbh" separator="," open="(" close=")">
                     #{cpbh}
                 </foreach>
@@ -73,12 +75,13 @@
         COUNT(country) as num,country
         from cxtrade.dbo.PM2_Art_Works
         <where>
-            COALESCE(CheckState, 0) != 10 and ArtImagePath IS NOT NULL and ArtImagePath != '' AND NodeId = '2999' AND WAID IS NOT NULL AND WAID != ''
+            COALESCE(CheckState, 0) != 10 and ArtImagePath IS NOT NULL and ArtImagePath != '' AND NodeId = '2999' AND
+            WAID IS NOT NULL AND WAID != ''
             <if test="cpbh != null and cpbh != '' ">
                 and sku like concat('%', #{cpbh}, '%')
             </if>
             <if test="cpbhList != null and cpbhList.size > 0">
-                and  sku in
+                and sku in
                 <foreach collection="cpbhList" item="cpbh" separator="," open="(" close=")">
                     #{cpbh}
                 </foreach>
@@ -94,19 +97,20 @@
     </select>
 
     <select id="queryAllPMCountryConfig" resultType="com.hooya.domain.vo.PmCountryConfig">
-        SELECT countryName,countryArea,country from cxtrade.dbo.PM_Country
+        SELECT countryName, countryArea, country
+        from cxtrade.dbo.PM_Country
     </select>
 
     <select id="queryResourceDescriptionByCpbh" resultType="com.hooya.domain.vo.ResDescriptionVo">
         SELECT Id, country, sku as cpbh,
-               Languaeg as language , Title, BulletPoint, Description ,Feature, Specification
+        Languaeg as language , Title, BulletPoint, Description ,Feature, Specification,SpecialOption
         From cxtrade.dbo.PM2_Sku_Content_Records
         <where>
             <if test="cpbh != null and cpbh != '' ">
                 and sku like concat('%', #{cpbh}, '%')
             </if>
             <if test="cpbhList != null and cpbhList.size > 0">
-                and  sku in
+                and sku in
                 <foreach collection="cpbhList" item="cpbh" separator="," open="(" close=")">
                     #{cpbh}
                 </foreach>
@@ -123,7 +127,7 @@
                     #{item}
                 </foreach>
             </if>
-
+            AND ( SpecialOption IS NULL OR SpecialOption != 'Temu专属文案' OR (SpecialOption = 'Temu专属文案' AND Status = 4))
         </where>
     </select>
 
@@ -160,15 +164,16 @@
         <if test="cpbh != null and cpbh != '' ">and sku like concat('%', #{cpbh}, '%')
         </if>
         <if test="cpbhList != null and cpbhList.size > 0">
-            and  sku in
+            and sku in
             <foreach collection="cpbhList" item="cpbh" separator="," open="(" close=")">
                 #{cpbh}
             </foreach>
         </if>
         <if test="country != null and country.size > 0">and country IN
             <foreach item="item" collection="country" open="(" separator="," close=")">
-                    #{item}
-                </foreach></if>
+                #{item}
+            </foreach>
+        </if>
         )
     </select>
 
@@ -183,7 +188,7 @@
                 and sku like concat('%', #{cpbh}, '%')
             </if>
             <if test="cpbhList != null and cpbhList.size > 0">
-                and  sku in
+                and sku in
                 <foreach collection="cpbhList" item="cpbh" separator="," open="(" close=")">
                     #{cpbh}
                 </foreach>
@@ -194,7 +199,9 @@
 
 
     <update id="updateImageDisableById">
-        update cxtrade.dbo.pim_pm_minio_image_path set is_disable = #{isDisable} where id = #{id}
+        update cxtrade.dbo.pim_pm_minio_image_path
+        set is_disable = #{isDisable}
+        where id = #{id}
     </update>
 
 
@@ -208,7 +215,7 @@
         left join Qc_picture b on a.number=b.father
         left join Qc_User c on a.yhry=c.name
         <where>
-            exists (select 1 from Qc_Result p where a.number=p.father  and p.cpbh= #{cpbh})
+            exists (select 1 from Qc_Result p where a.number=p.father and p.cpbh= #{cpbh})
             and webaddress like '%rar%'
             <if test="country != null and country.size > 0">
                 and e.country IN

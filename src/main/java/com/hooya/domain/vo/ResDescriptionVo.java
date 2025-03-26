@@ -21,4 +21,6 @@ public class ResDescriptionVo {
     private String feature;
 
     private String specification;
+
+    private String specialOption;
 }
