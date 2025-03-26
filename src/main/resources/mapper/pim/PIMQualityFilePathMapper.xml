@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hooya.mapper.pim.PIMQualityFilePathMapper">
+
+    <insert id="insertQualityFile" parameterType="com.hooya.domain.vo.PIMQualityFilePathVo" useGeneratedKeys="true" keyProperty="id">
+        insert into pim_quality_file_path(sku,minio_path,create_time,is_del,share_path,file_name,belonging_path,file_md5,country)
+        values(#{pimQualityFilePathVo.sku},#{pimQualityFilePathVo.minioPath,jdbcType=VARCHAR},NOW(),0,#{pimQualityFilePathVo.sharePath},#{pimQualityFilePathVo.fileName},#{pimQualityFilePathVo.belongingPath},#{pimQualityFilePathVo.fileMd5},#{pimQualityFilePathVo.country})
+    </insert>
+    <update id="updateQualityFile" parameterType="com.hooya.domain.vo.PIMQualityFilePathVo">
+        update pim_quality_file_path
+        set
+        minio_path = #{pimQualityFilePathVo.minioPath},
+        share_path = #{pimQualityFilePathVo.sharePath},
+        file_name = #{pimQualityFilePathVo.fileName},
+        belonging_path = #{pimQualityFilePathVo.belongingPath},
+        file_md5 = #{pimQualityFilePathVo.fileMd5},
+        country = #{pimQualityFilePathVo.country}
+        where id = #{pimQualityFilePathVo.id}
+    </update>
+
+    <select id="qeuryQualityFile" resultType="com.hooya.domain.vo.PIMQualityFilePathVo">
+        SELECT * from pim_quality_file_path where sku= #{sku} and file_name = #{fileName} and belonging_path = #{belongingPath}
+    </select>
+
+    <select id="getBelongingPathByCpbh" resultType="com.hooya.domain.vo.PIMQualityFilePathVo">
+        select sku,belonging_path from pim_quality_file_path where sku like concat('%', #{sku}, '%') group by sku,belonging_path
+    </select>
+
+    <select id="queryByBelongingPath" resultType="com.hooya.domain.vo.PIMQualityFilePathVo">
+        select * from pim_quality_file_path where sku like concat('%', #{sku}, '%') and belonging_path = #{belongingPath}
+    </select>
+</mapper>

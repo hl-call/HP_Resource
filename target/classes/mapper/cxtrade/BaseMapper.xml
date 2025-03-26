@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hooya.mapper.cxtrade.BaseMapper">
+
+    <select id="queryResourcePictureByCpbh" resultType="com.hooya.domain.vo.ResPictureVo">
+        select
+               id,sku,country,urgencyCode,createByAuto,artImagePath,threeDPlatform,
+            Parent_UrgencyCode,laterStagePath,renderPath,checkState
+        from cxtrade.dbo.PM2_Art_Works
+        <where>
+            ((COALESCE(CheckState, 0) != 10 and urgencyCode != 90 )or (urgencyCode = 90 and CheckState = 1)) and ArtImagePath IS NOT NULL and ArtImagePath != ''
+            <if test="cpbh != null and cpbh != '' ">
+                and sku like concat('%', #{cpbh}, '%')
+            </if>
+            <if test="cpbhList != null and cpbhList.size > 0">
+                and  sku in
+                <foreach collection="cpbhList" item="cpbh" separator="," open="(" close=")">
+                    #{cpbh}
+                </foreach>
+            </if>
+            <if test="country != null and country.size > 0 ">
+                and (urgencyCode = 90
+                or country IN
+                <foreach item="item" collection="country" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+
+    <select id="queryPicturePathByCpbh" resultType="com.hooya.domain.vo.ResPictureVo">
+        select
+        id,sku,country,urgencyCode,createByAuto,artImagePath,threeDPlatform,
+        Parent_UrgencyCode,laterStagePath,renderPath,checkState
+        from cxtrade.dbo.PM2_Art_Works
+        <where>
+            COALESCE(CheckState, 0) != 10 and ArtImagePath IS NOT NULL and ArtImagePath != ''
+            <if test="cpbh != null and cpbh != '' ">
+                and sku =#{cpbh}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryResourcePictureByCpbh2" resultType="com.hooya.domain.vo.ResPictureVo">
+        select
+        id,sku,country,urgencyCode,createByAuto,artImagePath,threeDPlatform,
+        Parent_UrgencyCode,laterStagePath,renderPath,checkState,WAID,AmzyyUserID,AmzyyUserName
+        from cxtrade.dbo.PM2_Art_Works
+        <where>
+            COALESCE(CheckState, 0) != 10 and ArtImagePath IS NOT NULL and ArtImagePath != '' AND NodeId = '2999' AND WAID IS NOT NULL AND WAID != ''
+            <if test="cpbh != null and cpbh != '' ">
+                and sku like concat('%', #{cpbh}, '%')
+            </if>
+            <if test="cpbhList != null and cpbhList.size > 0">
+                and  sku in
+                <foreach collection="cpbhList" item="cpbh" separator="," open="(" close=")">
+                    #{cpbh}
+                </foreach>
+            </if>
+            <if test="country != null and country.size > 0">
+                and country IN
+                <foreach item="item" collection="country" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="queryCountryNum" resultType="com.hooya.domain.vo.ResCountryNum">
+        select
+        COUNT(country) as num,country
+        from cxtrade.dbo.PM2_Art_Works
+        <where>
+            COALESCE(CheckState, 0) != 10 and ArtImagePath IS NOT NULL and ArtImagePath != '' AND NodeId = '2999' AND WAID IS NOT NULL AND WAID != ''
+            <if test="cpbh != null and cpbh != '' ">
+                and sku like concat('%', #{cpbh}, '%')
+            </if>
+            <if test="cpbhList != null and cpbhList.size > 0">
+                and  sku in
+                <foreach collection="cpbhList" item="cpbh" separator="," open="(" close=")">
+                    #{cpbh}
+                </foreach>
+            </if>
+            <if test="country != null and country.size > 0">
+                and country IN
+                <foreach item="item" collection="country" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by country
+    </select>
+
+    <select id="queryAllPMCountryConfig" resultType="com.hooya.domain.vo.PmCountryConfig">
+        SELECT countryName,countryArea,country from cxtrade.dbo.PM_Country
+    </select>
+
+    <select id="queryResourceDescriptionByCpbh" resultType="com.hooya.domain.vo.ResDescriptionVo">
+        SELECT Id, country, sku as cpbh,
+               Languaeg as language , Title, BulletPoint, Description ,Feature, Specification
+        From cxtrade.dbo.PM2_Sku_Content_Records
+        <where>
+            <if test="cpbh != null and cpbh != '' ">
+                and sku like concat('%', #{cpbh}, '%')
+            </if>
+            <if test="cpbhList != null and cpbhList.size > 0">
+                and  sku in
+                <foreach collection="cpbhList" item="cpbh" separator="," open="(" close=")">
+                    #{cpbh}
+                </foreach>
+            </if>
+            <if test="country != null and country.size > 0">
+                and country IN
+                <foreach item="item" collection="country" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="languages != null and languages.size > 0">
+                and Languaeg IN
+                <foreach item="item" collection="languages" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+        </where>
+    </select>
+
+
+    <select id="queryResourceSuit" resultType="com.hooya.domain.vo.ResSuitVo">
+        SELECT
+        a.Id AS WAID,
+        b.Id,
+        a.SKU,
+        a.Country,
+        b.Title,
+        b.BulletPoint,
+        b.Description,
+        b.Feature,
+        b.Specification,
+        b.Languaeg
+        FROM
+        cxtrade.dbo.PM_SKU_Distribution a
+        INNER JOIN
+        cxtrade.dbo.PM2_Sku_Content_Records b
+        ON a.SKU = b.Sku
+        AND a.Country = b.Country
+        AND a.RelationGuid = b.RelationGuid
+        AND a.TaskMemo = b.TaskMemo
+        WHERE
+        a.Id IN (
+        SELECT WAID FROM cxtrade.dbo.PM2_Art_Works
+        WHERE ISNULL(CheckState, 0) != 10
+        AND ArtImagePath IS NOT NULL
+        AND ArtImagePath != ''
+        AND NodeId = '2999'
+        AND WAID IS NOT NULL
+        AND WAID != ''
+        <if test="cpbh != null and cpbh != '' ">and sku like concat('%', #{cpbh}, '%')
+        </if>
+        <if test="cpbhList != null and cpbhList.size > 0">
+            and  sku in
+            <foreach collection="cpbhList" item="cpbh" separator="," open="(" close=")">
+                #{cpbh}
+            </foreach>
+        </if>
+        <if test="country != null and country.size > 0">and country IN
+            <foreach item="item" collection="country" open="(" separator="," close=")">
+                    #{item}
+                </foreach></if>
+        )
+    </select>
+
+
+    <select id="queryResourceVideoByCpbh" resultType="com.hooya.domain.vo.ResVideoVo">
+        select
+        *
+        from cxtrade.dbo.PM2_Art_VideoPublic
+        <where>
+            CameraImagePath IS NOT NULL and CameraImagePath != ''
+            <if test="cpbh != null and cpbh != '' ">
+                and sku like concat('%', #{cpbh}, '%')
+            </if>
+            <if test="cpbhList != null and cpbhList.size > 0">
+                and  sku in
+                <foreach collection="cpbhList" item="cpbh" separator="," open="(" close=")">
+                    #{cpbh}
+                </foreach>
+            </if>
+            and (VideoType = '展示视频' or VideoType = '酷家乐视频')
+        </where>
+    </select>
+
+
+    <update id="updateImageDisableById">
+        update cxtrade.dbo.pim_pm_minio_image_path set is_disable = #{isDisable} where id = #{id}
+    </update>
+
+
+    <select id="queryQualityFileByCpbh" resultType="com.hooya.domain.vo.ResQcReportVo">
+        select top 1
+        a.hthm+'|'+a.yhrq+'|'+c.realname as fileName,
+        replace(webaddress,'ftp://192.168.3.2','http://os.nbhooya.com/quality') as path,
+        e.country as country
+        from Qc_Report a
+        inner join cght d on a.hthm=d.hthm inner join scb_khmc e on d.khmc=e.khmc
+        left join Qc_picture b on a.number=b.father
+        left join Qc_User c on a.yhry=c.name
+        <where>
+            exists (select 1 from Qc_Result p where a.number=p.father  and p.cpbh= #{cpbh})
+            and webaddress like '%rar%'
+            <if test="country != null and country.size > 0">
+                and e.country IN
+                <foreach item="item" collection="country" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.number desc
+    </select>
+</mapper>

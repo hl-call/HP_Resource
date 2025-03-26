@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hooya.mapper.pim.PIMCpbhImageTypeDimensionMapper">
+
+    <insert id="insert" parameterType="com.hooya.domain.vo.PIMCpbhImageTypeDimensionVo" useGeneratedKeys="true" keyProperty="id">
+        INSERT IGNORE INTO pim_cpbh_image_type_dimension(sku,file_type,file_group,country)
+        values(#{pimCpbhImageTypeDimensionVo.sku},#{pimCpbhImageTypeDimensionVo.fileType},#{pimCpbhImageTypeDimensionVo.fileGroup},#{pimCpbhImageTypeDimensionVo.country})
+    </insert>
+
+
+    <update id="updateFileGroupByCpbh">
+        update pim_cpbh_image_type_dimension
+        set
+        file_group = #{fileGroup}
+        where sku = #{sku}
+        and country = #{country}
+    </update>
+
+    <select id="queryGroupTypeByCpbh" resultType="java.lang.Integer">
+        SELECT max(file_group) from pim_cpbh_image_type_dimension where  sku = #{sku} and country =#{country}
+    </select>
+</mapper>

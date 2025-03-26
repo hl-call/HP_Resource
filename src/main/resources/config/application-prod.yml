@@ -1,0 +1,43 @@
+server:
+  port: 9089
+
+spring:
+  datasource:
+    cxtrade:
+      url: jdbc:sqlserver://192.168.0.253;DatabaseName=cxtrade;encrypt=false
+      username: eshop
+      password: ESHOP#Hooya
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      type: com.alibaba.druid.pool.DruidDataSource
+      druid:
+        initial-size: 10
+        max-active: 100
+        max-wait: 60000
+        min-idle: 10
+        pool-prepared-statements: true
+        max-open-prepared-statements: 20
+    pim:
+      url: jdbc:mysql://mysql-master.nbhooya.net:3306/hooya_pim_goods?characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+      username: mysql_slave
+      password: mysql_slave@2024++
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      type: com.alibaba.druid.pool.DruidDataSource
+      druid:
+        initial-size: 10
+        max-active: 100
+        max-wait: 60000
+        min-idle: 10
+        pool-prepared-statements: true
+        max-open-prepared-statements: 20
+
+
+mybatis-plus:
+  global-config:
+    banner: false
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    defaultStatementTimeout: 60
+
+decodePath: file:C:/Users/Administrator/Desktop/解密/
+destPath: C:/Users/Administrator/Desktop/解密/
+serverUrl: http://192.168.3.116:9099/images/

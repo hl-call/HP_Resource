@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.github.axet:java-unrar:1.7.0-8">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/axet/java-unrar/1.7.0-8/java-unrar-1.7.0-8.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/axet/java-unrar/1.7.0-8/java-unrar-1.7.0-8-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/axet/java-unrar/1.7.0-8/java-unrar-1.7.0-8-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
