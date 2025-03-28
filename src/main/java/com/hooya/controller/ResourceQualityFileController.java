@@ -53,7 +53,8 @@ import java.util.stream.Stream;
 @Slf4j
 public class ResourceQualityFileController {
 
-    public final BaseMapper baseMapper;
+    @Autowired
+    public BaseMapper baseMapper;
 
     public final MinIOHelper minIOHelper;
 
@@ -106,9 +107,9 @@ public class ResourceQualityFileController {
         result = new ArrayList<>(set);
 
 
-        List<PIMPMMinioQualityFilePathVo> pimpmMinioImagePathCpbhList = pimpmMinioQualityFilePathMapper.queryByCpbh(resQueryVo.getCpbh());
-        List<PIMPMMinioQualityFilePathVo> pimpmMinioImagePathBtwjList = pimpmMinioQualityFilePathMapper.queryByBtwj(resQueryVo.getCpbh());
-        List<PIMPMMinioQualityFilePathVo> pimpmMinioImagePathZsList = pimpmMinioQualityFilePathMapper.queryByZs(resQueryVo.getCpbh());
+        List<PIMPMMinioQualityFilePathVo> pimpmMinioImagePathCpbhList = pimpmMinioQualityFilePathMapper.queryByCpbh(cpbhList.get(0));
+        List<PIMPMMinioQualityFilePathVo> pimpmMinioImagePathBtwjList = pimpmMinioQualityFilePathMapper.queryByBtwj(cpbhList.get(0));
+        List<PIMPMMinioQualityFilePathVo> pimpmMinioImagePathZsList = pimpmMinioQualityFilePathMapper.queryByZs(cpbhList.get(0));
         TemuOMArt temuOMArtCpbh = new TemuOMArt();
         temuOMArtCpbh.setQualityInfo(pimpmMinioImagePathCpbhList);
         temuOMArtCpbh.setBusniess_name(cpbh);
@@ -123,6 +124,21 @@ public class ResourceQualityFileController {
         temuOMArtZs.setQualityInfo(pimpmMinioImagePathZsList);
         temuOMArtZs.setBusniess_name(BUSINESS_NAME_ZS);
         result.add(temuOMArtZs);
+
+
+        List<PIMPMMinioQualityFilePathVo> pimNewImagePathCpbhList = pimpmMinioQualityFilePathMapper.queryQualityImgBycpbh(cpbhList.get(0));
+        // 根据 groupName 分组
+        Map<String, List<PIMPMMinioQualityFilePathVo>> groupedByGroupName = pimNewImagePathCpbhList.stream()
+                .collect(Collectors.groupingBy(PIMPMMinioQualityFilePathVo::getGroupName));
+
+        // 将每个分组添加到 temuOMArtCpbh 中
+        for (Map.Entry<String, List<PIMPMMinioQualityFilePathVo>> entry : groupedByGroupName.entrySet()) {
+            TemuOMArt subTemuOMArt = new TemuOMArt();
+            subTemuOMArt.setQualityInfo(entry.getValue());
+            subTemuOMArt.setBusniess_name(entry.getKey());
+            result.add(subTemuOMArt);
+        }
+
 
         return new Result<>(200, result, "操作成功!");
     }

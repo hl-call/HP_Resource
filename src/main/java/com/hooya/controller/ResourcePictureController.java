@@ -6,6 +6,7 @@ import com.hooya.domain.vo.*;
 import com.hooya.mapper.cxtrade.BaseMapper;
 import com.hooya.mapper.pim.PIMCpbhImageTypeDimensionMapper;
 import com.hooya.mapper.pim.PIMPMMinioImagePathMapper;
+import com.hooya.mapper.pim.PIMPMMinioQualityFilePathMapper;
 import com.hooya.util.MinIOHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ResourcePictureController {
 
-    public final BaseMapper baseMapper;
+    @Autowired
+    public BaseMapper baseMapper;
 
     public final MinIOHelper minIOHelper;
 
@@ -44,6 +46,9 @@ public class ResourcePictureController {
 
     @Autowired
     PIMCpbhImageTypeDimensionMapper pimCpbhImageTypeDimensionMapper;
+
+    @Autowired
+    PIMPMMinioQualityFilePathMapper pimpmMinioQualityFilePathMapper;
 
     @Value("${serverUrl}")
     private String serverUrl;
@@ -233,6 +238,28 @@ public class ResourcePictureController {
         return new Result<>(200, suiteList, "操作成功!");
     }
 
+    @PostMapping("/putImgByNewQuality")
+    public Boolean putImgByNewQuality() {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        map.put("006", "产品");
+        map.put("002", "大货");
+        map.put("007", "测试");
+        map.put("005", "摔箱");
+        map.put("003", "外包装");
+
+        for(String key : map.keySet()){
+            List<QCMCheckPointCategoryVo> qcmCheckPointCategoryVoList = baseMapper.getQCMCheckPointCategory(key);
+            for (QCMCheckPointCategoryVo qcmCheckPointCategoryVo : qcmCheckPointCategoryVoList) {
+                qcmCheckPointCategoryVo.setType(map.get(key));
+                PIMPMMinioQualityFilePathVo pimpmMinioImagePath = pimpmMinioQualityFilePathMapper.queryQualityMinioPathNew(qcmCheckPointCategoryVo.getCpbh(), qcmCheckPointCategoryVo.getMediaPath(), qcmCheckPointCategoryVo.getCountry(), qcmCheckPointCategoryVo.getOrderCode());
+                if (null == pimpmMinioImagePath) {
+                    pimpmMinioQualityFilePathMapper.insertNewQualityFile(qcmCheckPointCategoryVo);
+                }
+            }
+        }
+
+        return true;
+    }
 
     @PostMapping("/listVideos")
     @Transactional

@@ -1,6 +1,7 @@
 package com.hooya.mapper.pim;
 
 import com.hooya.domain.vo.PIMPMMinioQualityFilePathVo;
+import com.hooya.domain.vo.QCMCheckPointCategoryVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -21,6 +22,12 @@ public interface PIMPMMinioQualityFilePathMapper {
     List<PIMPMMinioQualityFilePathVo> queryByCpbh(@Param("cpbh") String cpbh);
     List<PIMPMMinioQualityFilePathVo>  queryByBtwj(@Param("cpbh") String cpbh);
     List<PIMPMMinioQualityFilePathVo>  queryByZs(@Param("cpbh") String cpbh);
+    List<PIMPMMinioQualityFilePathVo>  queryQualityImgBycpbh(@Param("cpbh") String cpbh);
     // PIM_PMM_MINIO_QUALITY_FILE_PATH 结束
+
+    Integer insertNewQualityFile(@Param("qCMCheckPointCategoryVo") QCMCheckPointCategoryVo qCMCheckPointCategoryVo);
+
+    PIMPMMinioQualityFilePathVo queryQualityMinioPathNew(@Param("cpbh") String cpbh, @Param("path") String path, @Param("country") String country,@Param("orderCode") String orderCode);
+
 
 }

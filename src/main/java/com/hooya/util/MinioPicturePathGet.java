@@ -37,7 +37,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MinioPicturePathGet {
 
-    public final BaseMapper baseMapper;
+    @Autowired
+    public  BaseMapper baseMapper;
 
     public final MinIOHelper minIOHelper;
 

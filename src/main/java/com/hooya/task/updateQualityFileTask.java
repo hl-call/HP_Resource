@@ -3,11 +3,11 @@ package com.hooya.task;
 import com.alibaba.excel.EasyExcel;
 import com.hooya.domain.dto.CpbhExcelDto;
 import com.hooya.domain.dto.TemuOMArt;
-import com.hooya.domain.vo.PIMCpbhImageTypeDimensionVo;
-import com.hooya.domain.vo.PIMPMMinioImagePathVo;
-import com.hooya.domain.vo.ResPictureVo;
+import com.hooya.domain.vo.*;
 import com.hooya.listener.CustomExcelListener;
+import com.hooya.mapper.cxtrade.BaseMapper;
 import com.hooya.mapper.pim.PIMPMMinioImagePathMapper;
+import com.hooya.mapper.pim.PIMPMMinioQualityFilePathMapper;
 import com.hooya.util.FilePathGet;
 import com.hooya.util.MinioPicturePathGet;
 import com.hooya.util.UpdateQualityByCpbh;
@@ -47,6 +47,14 @@ public class updateQualityFileTask {
 
     @Autowired
     MinioPicturePathGet minioPicturePathGet;
+
+    @Autowired
+    public BaseMapper baseMapper;
+
+    @Autowired
+    PIMPMMinioQualityFilePathMapper pimpmMinioQualityFilePathMapper;
+
+
 
     public final ExecutorService taskExecutor;
 
@@ -142,5 +150,30 @@ public class updateQualityFileTask {
         // 当所有任务都完成时，可以在这里进行一些后续操作
         allFutures.join();
         System.out.println("所有任务完成");
+    }
+
+    /**
+     * 把质检系统的图片每天搬过来
+     *
+     */
+    @Scheduled(cron = "0 00 02 * * ?")
+    public  void putImgByNewQuality() {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        map.put("006", "产品");
+        map.put("002", "大货");
+        map.put("007", "测试");
+        map.put("005", "摔箱");
+        map.put("003", "外包装");
+
+        for(String key : map.keySet()){
+            List<QCMCheckPointCategoryVo> qcmCheckPointCategoryVoList = baseMapper.getQCMCheckPointCategory(key);
+            for (QCMCheckPointCategoryVo qcmCheckPointCategoryVo : qcmCheckPointCategoryVoList) {
+                qcmCheckPointCategoryVo.setType(map.get(key));
+                PIMPMMinioQualityFilePathVo pimpmMinioImagePath = pimpmMinioQualityFilePathMapper.queryQualityMinioPathNew(qcmCheckPointCategoryVo.getCpbh(), qcmCheckPointCategoryVo.getMediaPath(), qcmCheckPointCategoryVo.getCountry(), qcmCheckPointCategoryVo.getOrderCode());
+                if (null == pimpmMinioImagePath) {
+                    pimpmMinioQualityFilePathMapper.insertNewQualityFile(qcmCheckPointCategoryVo);
+                }
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.hooya.domain.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 /**
@@ -22,4 +23,10 @@ public class PIMPMMinioQualityFilePathVo {
     private String country;
     private String fileGroup;
     private String fileType;
+
+    @TableField(exist = false)
+    String groupName;
+
+
+
 }

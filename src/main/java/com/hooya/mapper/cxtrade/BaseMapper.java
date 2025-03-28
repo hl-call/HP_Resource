@@ -29,5 +29,7 @@ public interface BaseMapper {
 
     // 查质检文件
     ResQcReportVo queryQualityFileByCpbh(@Param("cpbh") String cpbh, @Param("country") List<String> country);
+
+    List<QCMCheckPointCategoryVo> getQCMCheckPointCategory(@Param("type") String type);
 }
 

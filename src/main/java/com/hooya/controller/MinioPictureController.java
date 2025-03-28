@@ -5,7 +5,6 @@ import com.hooya.domain.dto.TemuOMArt;
 import com.hooya.domain.vo.PIMPMMinioImagePathVo;
 import com.hooya.domain.vo.ResPictureVo;
 import com.hooya.domain.vo.ResQueryVo;
-import com.hooya.mapper.cxtrade.BaseMapper;
 import com.hooya.mapper.pim.PIMCpbhImageTypeDimensionMapper;
 import com.hooya.mapper.pim.PIMPMMinioImagePathMapper;
 import com.hooya.util.MinIOHelper;
@@ -37,7 +36,6 @@ import java.util.concurrent.Future;
 @RequestMapping("/resPicNew")
 @Slf4j
 public class MinioPictureController {
-    public final BaseMapper baseMapper;
 
     public final MinIOHelper minIOHelper;
 
@@ -48,6 +46,7 @@ public class MinioPictureController {
 
     @Autowired
     PIMCpbhImageTypeDimensionMapper pimCpbhImageTypeDimensionMapper;
+
 
     private List<String> processCpbh(String cpbh) {
         if (!StringUtils.hasText(cpbh)) {
