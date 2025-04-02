@@ -59,22 +59,21 @@ public class ResourcePictureController {
     @PostMapping("/listPictures")
     @Transactional
     public Result<Object> listPictures(@RequestBody ResQueryVo resQueryVo) {
-        if(!StringUtils.hasText(resQueryVo.getCpbh())){
+        if (!StringUtils.hasText(resQueryVo.getCpbh())) {
             return new Result<>(500, null, "cpbh不能为空!");
         }
         List<String> cpbhList = processCpbh(resQueryVo.getCpbh());
         String cpbhQuery = "";
-        if(cpbhList==null){
-            cpbhQuery =  resQueryVo.getCpbh();
+        if (cpbhList == null) {
+            cpbhQuery = resQueryVo.getCpbh();
         }
 
 
         List<String> countryList = resQueryVo.getArea();
 
-        List<ResPictureVo> resPictureVos = baseMapper.queryResourcePictureByCpbh(cpbhList,cpbhQuery,countryList);
+        List<ResPictureVo> resPictureVos = baseMapper.queryResourcePictureByCpbh(cpbhList, cpbhQuery, countryList);
 
-        List<TemuOMArt> allTemuOMArt =new ArrayList<>();
-
+        List<TemuOMArt> allTemuOMArt = new ArrayList<>();
 
 
         // 存储 Future 对象
@@ -106,23 +105,21 @@ public class ResourcePictureController {
     }
 
 
-
-
     @PostMapping("/listDescriptions")
-    public Result<Object> listDescriptions(@RequestBody ResQueryVo resQueryVo){
-        if(!StringUtils.hasText(resQueryVo.getCpbh())){
+    public Result<Object> listDescriptions(@RequestBody ResQueryVo resQueryVo) {
+        if (!StringUtils.hasText(resQueryVo.getCpbh())) {
             return new Result<>(500, null, "cpbh不能为空!");
         }
         List<String> cpbhList = processCpbh(resQueryVo.getCpbh());
         String cpbhQuery = "";
-        if(cpbhList==null){
-            cpbhQuery =  resQueryVo.getCpbh();
+        if (cpbhList == null) {
+            cpbhQuery = resQueryVo.getCpbh();
         }
 
         //   List<String> countryList = initCountry(resQueryVo.getArea());
         List<String> countryList = resQueryVo.getArea();
         List<String> languageList = resQueryVo.getLanguages();
-        List<ResDescriptionVo> resDescriptionVos = baseMapper.queryResourceDescriptionByCpbh(cpbhList,cpbhQuery, countryList,languageList);
+        List<ResDescriptionVo> resDescriptionVos = baseMapper.queryResourceDescriptionByCpbh(cpbhList, cpbhQuery, countryList, languageList);
 
         List<ResDescriptionDto> resDescriptionDtos = new ArrayList<>();
 
@@ -133,32 +130,34 @@ public class ResourcePictureController {
             map.put("description", resDescriptionVo.getDescription());
             map.put("title", resDescriptionVo.getTitle());
             map.put("specifications", resDescriptionVo.getSpecification());
+            map.put("instructions", resDescriptionVo.getInstructions());
+            map.put("packageIncludes", resDescriptionVo.getPackageIncludes());
             resDescriptionDtos.add(new ResDescriptionDto(
-                    resDescriptionVo.getId(),resDescriptionVo.getCountry(),resDescriptionVo.getCpbh(), resDescriptionVo.getLanguage(),resDescriptionVo.getSpecialOption(), map));
+                    resDescriptionVo.getId(), resDescriptionVo.getCountry(), resDescriptionVo.getCpbh(), resDescriptionVo.getLanguage(), resDescriptionVo.getSpecialOption(), map));
         }
 
-        return new Result<>(200,resDescriptionDtos,"操作成功");
+        return new Result<>(200, resDescriptionDtos, "操作成功");
     }
 
     @PostMapping("/listSuite")
     @Transactional
-    public Result<Object> listSuite(@RequestBody ResQueryVo resQueryVo){
-        if(!StringUtils.hasText(resQueryVo.getCpbh())){
+    public Result<Object> listSuite(@RequestBody ResQueryVo resQueryVo) {
+        if (!StringUtils.hasText(resQueryVo.getCpbh())) {
             return new Result<>(500, null, "cpbh不能为空!");
         }
         List<String> cpbhList = processCpbh(resQueryVo.getCpbh());
         String cpbhQuery = "";
-        if(cpbhList==null){
-            cpbhQuery =  resQueryVo.getCpbh();
+        if (cpbhList == null) {
+            cpbhQuery = resQueryVo.getCpbh();
         }
 
 
         List<String> countryList = resQueryVo.getArea();
 
 
-        List<ResPictureVo> artWorksList = baseMapper.queryResourcePictureByCpbh2(cpbhList,cpbhQuery,countryList);
-        List<ResCountryNum> queryCountryNum = baseMapper.queryCountryNum(cpbhList,cpbhQuery,countryList);
-        List<ResSuitVo> waBaseResult = baseMapper.queryResourceSuit(cpbhList,cpbhQuery, countryList);
+        List<ResPictureVo> artWorksList = baseMapper.queryResourcePictureByCpbh2(cpbhList, cpbhQuery, countryList);
+        List<ResCountryNum> queryCountryNum = baseMapper.queryCountryNum(cpbhList, cpbhQuery, countryList);
+        List<ResSuitVo> waBaseResult = baseMapper.queryResourceSuit(cpbhList, cpbhQuery, countryList);
 
         // 处理 waBaseResult
         List<TemuOMSuite> waResultList = new ArrayList<>();
@@ -176,6 +175,8 @@ public class ResourcePictureController {
             dataInfo.setDescription(waResult.getDescription());
             dataInfo.setFeatures(waResult.getFeature());
             dataInfo.setSpecifications(waResult.getSpecification());
+            dataInfo.setInstructions(waResult.getInstructions());
+            dataInfo.setPackageIncludes(waResult.getPackageIncludes());
             tmpModel.setData_info(dataInfo);
 
             waResultList.add(tmpModel);
@@ -227,13 +228,13 @@ public class ResourcePictureController {
             for (int j = 0; j < skus.length; j++) {
                 String sku = skus[j];
                 Integer fileGroupNum = pimCpbhImageTypeDimensionMapper.queryGroupTypeByCpbh(sku, country);
-                if(null==fileGroupNum||!fileGroupNum.equals(num)){
-                    pimCpbhImageTypeDimensionMapper.updateFileGroupByCpbh(sku, num,country);
+                if (null == fileGroupNum || !fileGroupNum.equals(num)) {
+                    pimCpbhImageTypeDimensionMapper.updateFileGroupByCpbh(sku, num, country);
                 }
             }
         }
 
-        pimpmMinioImagePathMapper.updateFileGroupByCpbh(resQueryVo.getCpbh(),suiteList.size());
+        pimpmMinioImagePathMapper.updateFileGroupByCpbh(resQueryVo.getCpbh(), suiteList.size());
 
         return new Result<>(200, suiteList, "操作成功!");
     }
@@ -247,7 +248,7 @@ public class ResourcePictureController {
         map.put("005", "摔箱");
         map.put("003", "外包装");
 
-        for(String key : map.keySet()){
+        for (String key : map.keySet()) {
             List<QCMCheckPointCategoryVo> qcmCheckPointCategoryVoList = baseMapper.getQCMCheckPointCategory(key);
             for (QCMCheckPointCategoryVo qcmCheckPointCategoryVo : qcmCheckPointCategoryVoList) {
                 qcmCheckPointCategoryVo.setType(map.get(key));
@@ -264,20 +265,20 @@ public class ResourcePictureController {
     @PostMapping("/listVideos")
     @Transactional
     public Result<Object> listVideos(@RequestBody ResQueryVo resQueryVo) {
-        if(!StringUtils.hasText(resQueryVo.getCpbh())){
+        if (!StringUtils.hasText(resQueryVo.getCpbh())) {
             return new Result<>(500, null, "cpbh不能为空!");
         }
         List<String> cpbhList = processCpbh(resQueryVo.getCpbh());
         String cpbhQuery = "";
-        if(cpbhList==null){
-            cpbhQuery =  resQueryVo.getCpbh();
+        if (cpbhList == null) {
+            cpbhQuery = resQueryVo.getCpbh();
         }
 
         List<String> countryList = resQueryVo.getArea();
 
-        List<ResVideoVo> resVideoVos = baseMapper.queryResourceVideoByCpbh(cpbhList,cpbhQuery, countryList);
+        List<ResVideoVo> resVideoVos = baseMapper.queryResourceVideoByCpbh(cpbhList, cpbhQuery, countryList);
 
-        List<TemuOMArt> allTemuOMArt =new ArrayList<>();
+        List<TemuOMArt> allTemuOMArt = new ArrayList<>();
 
 
         // 存储 Future 对象
@@ -316,7 +317,7 @@ public class ResourcePictureController {
     @PostMapping("/updatePicture")
     @Transactional
     public Result<Object> updatePicture(@RequestBody ResUpdatePictureVo resUpdatePictureVo) {
-        if(null==resUpdatePictureVo.getIds()){
+        if (null == resUpdatePictureVo.getIds()) {
             return new Result<>(500, null, "所选图片id不能为空!");
         }
         List<Long> ids = resUpdatePictureVo.getIds();
@@ -339,7 +340,7 @@ public class ResourcePictureController {
 
         switch (t.getUrgencyCode()) {
             case "30":
-                if (t.getCreateByAuto()!= null && t.getCreateByAuto() == 1) {
+                if (t.getCreateByAuto() != null && t.getCreateByAuto() == 1) {
                     item.setBusniss_code(1);
                     item.setBusniess_name("新品");
                 } else {
@@ -380,7 +381,7 @@ public class ResourcePictureController {
                 break;
         }
 
-        if (t.getCheckState()!= null && t.getCheckState() == 1) {
+        if (t.getCheckState() != null && t.getCheckState() == 1) {
             item.setCompletedFlag(1);
         } else {
             item.setCompletedFlag(0);
@@ -393,29 +394,34 @@ public class ResourcePictureController {
             list.add(cpbhs[i]);
         }
 
-        if (!item.getFile_path().isEmpty()) {
-            // 使用正则表达式来分割字符串
-            String[] paths = item.getFile_path().split("(?<!^\\\\)\\\\(?=\\\\)");
+        try {
+            if (!item.getFile_path().isEmpty()) {
+                // 使用正则表达式来分割字符串
+                String[] paths = item.getFile_path().split("(?<!^\\\\)\\\\(?=\\\\)");
 
-            for (String path : paths) {
-                if (!path.isEmpty()) {
-                    TemuOMArt _item = item.copy(); // 假设这里有一个copy方法来克隆对象
-                    String sharePath = "\\" + path;
-                    List<String> _paths = new ArrayList<>();
-                    try {
-                        // 消除路径中的空格，消除最后一个特殊字符，比如，或者；
-                        sharePath = sharePath.trim().replaceAll("[,;，]$", "").trim();
-                        getAllFilesInDirectory(sharePath, _paths,list);
-                    } catch (Exception e) {
-                        return null;
+                for (String path : paths) {
+                    if (!path.isEmpty()) {
+                        TemuOMArt _item = item.copy(); // 假设这里有一个copy方法来克隆对象
+                        String sharePath = "\\" + path;
+                        List<String> _paths = new ArrayList<>();
+                        try {
+                            // 消除路径中的空格，消除最后一个特殊字符，比如，或者；
+                            sharePath = sharePath.trim().replaceAll("[,;，]$", "").trim();
+                            getAllFilesInDirectory(sharePath, _paths, list);
+                        } catch (Exception e) {
+                            return null;
+                        }
+                        _item.setFile_path(sharePath);
+                        _item.getPicture_url().addAll(_paths);
+                        if (!_item.getPicture_url().isEmpty())
+                            result.add(_item);
                     }
-                    _item.setFile_path(sharePath);
-                    _item.getPicture_url().addAll(_paths);
-                    if(!_item.getPicture_url().isEmpty())
-                        result.add(_item);
                 }
             }
+        } catch (Exception e) {
+            return null;
         }
+
 
         // 使用本地路径存储
 
@@ -433,9 +439,7 @@ public class ResourcePictureController {
         }*/
 
 
-
-
-     //   return result;
+        //   return result;
 
         // 转换成miniIO路径
 /*
@@ -453,7 +457,7 @@ public class ResourcePictureController {
 
         Set<TemuOMArt> set = new LinkedHashSet<>(result);
         result = new ArrayList<>(set);
-     //   return result;
+        //   return result;
         List<CompletableFuture<TemuOMArt>> futures = new ArrayList<>();
         // 2024.12.09前版本
  /*       for (TemuOMArt temuOMArtResult : result) {
@@ -529,7 +533,7 @@ public class ResourcePictureController {
                                 PIMPMMinioImagePathVo pimpmMinioImagePath = null;
                                 for (int i = 0; i < pimpmMinioImagePathList.size(); i++) {
                                     PIMPMMinioImagePathVo pimpmMinioImagePathVo = pimpmMinioImagePathList.get(i);
-                                    if(pimpmMinioImagePathVo.getSharePath().equals(nativeUrl)){
+                                    if (pimpmMinioImagePathVo.getSharePath().equals(nativeUrl)) {
                                         pimpmMinioImagePath = pimpmMinioImagePathVo;
                                         pimpmMinioImagePathVo.setCountry(country);
                                         pimpmMinioImagePathVo.setFileType(busniessName);
@@ -546,10 +550,10 @@ public class ResourcePictureController {
                                     pimCpbhImageTypeDimensionVo.setFileType(busniessName);
                                     pimCpbhImageTypeDimensionMapper.insert(pimCpbhImageTypeDimensionVo);
                                 }
-                                if(null!=pimpmMinioImagePath){
+                                if (null != pimpmMinioImagePath) {
                                     return pimpmMinioImagePath;
                                 } else {
-                                    String minioPathNew = minIOHelper.uploadToMinIO(imagePathBase,localFilePath);
+                                    String minioPathNew = minIOHelper.uploadToMinIO(imagePathBase, localFilePath);
                                     PIMPMMinioImagePathVo pimpmMinioImagePathVo = new PIMPMMinioImagePathVo();
                                     pimpmMinioImagePathVo.setSku(cpbh);
                                     pimpmMinioImagePathVo.setSharePath(nativeUrl);
@@ -606,7 +610,6 @@ public class ResourcePictureController {
 */
 
 
-
         return updatedResults;
 
     }
@@ -637,7 +640,7 @@ public class ResourcePictureController {
                     _item.setFile_path(sharePath);
                     _paths.add(sharePath);
                     _item.setPicture_url(_paths);
-                    if(!_item.getPicture_url().isEmpty())
+                    if (!_item.getPicture_url().isEmpty())
                         result.add(_item);
                 }
             }
@@ -657,7 +660,7 @@ public class ResourcePictureController {
             filePaths.add(directory);
         } else if (!dir.exists() || !dir.isDirectory()) {
             throw new IllegalArgumentException("Invalid directory path: " + directory);
-        }  else {
+        } else {
 
             // 获取当前文件夹中的所有图片文件路径（不处理子文件夹）
             File[] imageFiles = listImageFiles(dir);
@@ -694,7 +697,6 @@ public class ResourcePictureController {
             }
         }
     }
-
 
 
     public void getChildFilesInDirectory(String directory, List<String> filePaths) {
@@ -753,7 +755,7 @@ public class ResourcePictureController {
         }
     }
 
-    public List<String> initCountry(List<String> areaList){
+    public List<String> initCountry(List<String> areaList) {
         List<PmCountryConfig> pmCountryConfigs = baseMapper.queryAllPMCountryConfig();
         List<String> countryList = new ArrayList<>();
         for (String area : areaList) {

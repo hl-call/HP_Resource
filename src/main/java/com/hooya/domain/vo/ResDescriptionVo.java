@@ -23,4 +23,8 @@ public class ResDescriptionVo {
     private String specification;
 
     private String specialOption;
+
+    private String instructions;
+
+    private String packageIncludes;
 }

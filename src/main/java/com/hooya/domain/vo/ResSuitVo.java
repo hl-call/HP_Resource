@@ -13,5 +13,7 @@ public class ResSuitVo {
     private String description;
     private String feature;
     private String specification;
+    private String instructions;
+    private String packageIncludes;
     private String languaeg;
 }

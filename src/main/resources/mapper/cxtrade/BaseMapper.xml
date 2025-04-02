@@ -103,7 +103,8 @@
 
     <select id="queryResourceDescriptionByCpbh" resultType="com.hooya.domain.vo.ResDescriptionVo">
         SELECT Id, country, sku as cpbh,
-        Languaeg as language , Title, BulletPoint, Description ,Feature, Specification,SpecialOption
+        Languaeg as language , Title, BulletPoint, Description ,Feature,
+        Specification,SpecialOption,Instructions,PackageIncludes
         From cxtrade.dbo.PM2_Sku_Content_Records
         <where>
             <if test="cpbh != null and cpbh != '' ">
@@ -143,6 +144,8 @@
         b.Description,
         b.Feature,
         b.Specification,
+        b.Instructions,
+        b.PackageIncludes,
         b.Languaeg
         FROM
         cxtrade.dbo.PM_SKU_Distribution a
@@ -229,12 +232,15 @@
 
 
     <select id="getQCMCheckPointCategory" resultType="com.hooya.domain.vo.QCMCheckPointCategoryVo">
-        SELECT
-            a.MediaPath,a.cpbh,b.Country,b.OrderCode
-        FROM  [QC_M_Media] a
-            inner join  QC_M_CheckPointCategory  b on a.CheckPointCode = b.Code
-        where  b.Category LIKE CONCAT('${type}', '%')
-        order by a.Sort,b.Sort asc
+        SELECT a.MediaPath,
+               a.cpbh,
+               b.Country,
+               b.OrderCode
+        FROM [QC_M_Media] a
+            inner join QC_M_CheckPointCategory b
+        on a.CheckPointCode = b.Code
+        where b.Category LIKE CONCAT('${type}', '%')
+        order by a.Sort, b.Sort asc
     </select>
 
 

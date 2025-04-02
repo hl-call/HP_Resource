@@ -9,4 +9,6 @@ public class TemuDataInfoOM {
     private String description;
     private String features;
     private String specifications;
+    private String instructions;
+    private String packageIncludes;
 }
