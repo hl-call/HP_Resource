@@ -529,6 +529,7 @@ public class ResourcePictureController {
                                 String filePath = temuOMArtResult.getFile_path();
                                 String nativeFileName = minIOHelper.processFile(imagePathBase);
                                 String nativeUrl = serverUrl + nativeFileName;
+                                String fileName = getImageName(imagePathBase);
                                 localFilePath = destPath + nativeFileName;
                                 PIMPMMinioImagePathVo pimpmMinioImagePath = null;
                                 for (int i = 0; i < pimpmMinioImagePathList.size(); i++) {
@@ -538,6 +539,7 @@ public class ResourcePictureController {
                                         pimpmMinioImagePathVo.setCountry(country);
                                         pimpmMinioImagePathVo.setFileType(busniessName);
                                         pimpmMinioImagePathVo.setFilePath(filePath);
+                                        pimpmMinioImagePathVo.setFileName(fileName);
                                         pimpmMinioImagePathMapper.update(pimpmMinioImagePathVo);
                                     }
                                 }
@@ -561,6 +563,7 @@ public class ResourcePictureController {
                                     pimpmMinioImagePathVo.setCountry(country);
                                     pimpmMinioImagePathVo.setFileType(busniessName);
                                     pimpmMinioImagePathVo.setFilePath(filePath);
+                                    pimpmMinioImagePathVo.setFileName(fileName);
                                     //新增一条的id
                                     pimpmMinioImagePathMapper.insert(pimpmMinioImagePathVo);
                                     Long id = pimpmMinioImagePathVo.getId();
@@ -612,6 +615,16 @@ public class ResourcePictureController {
 
         return updatedResults;
 
+    }
+
+    String getImageName(String path){
+        // 获取文件名（包含扩展名）
+        String fullFileName = path.substring(path.lastIndexOf("\\") + 1); // "FH10147YW-1 (1).jpg"
+
+        // 去掉扩展名，获取纯文件名
+        String fileNameWithoutExtension = fullFileName.split("\\.")[0]; // "FH10147YW-1 (1)"
+
+        return fileNameWithoutExtension;
     }
 
     public List<TemuOMArt> artTaskToQMArtVideo(ResVideoVo t) {

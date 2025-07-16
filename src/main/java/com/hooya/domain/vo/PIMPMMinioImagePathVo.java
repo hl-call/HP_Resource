@@ -1,5 +1,6 @@
 package com.hooya.domain.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 /**
@@ -19,4 +20,7 @@ public class PIMPMMinioImagePathVo {
     private Integer fileGroup;
     private String fileType;
     private String filePath;
+
+    @TableField(exist = false)
+    private String fileName;
 }

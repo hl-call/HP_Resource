@@ -31,8 +31,10 @@ import java.util.concurrent.TimeUnit;
 public class MinIOHelper {
 
     private final String endpoint = "https://minio.nbhooya.net";
-    private final String accessKey = "iLHj2Bvgd0iAQR0ztC7P";
-    private final String secretKey = "T0yZVLPA1eJPc0nWWbRpR87dACnG0V0gta2R1Qnz";
+//    private final String accessKey = "iLHj2Bvgd0iAQR0ztC7P";
+//    private final String secretKey = "T0yZVLPA1eJPc0nWWbRpR87dACnG0V0gta2R1Qnz";
+    private final String accessKey = "BNi6eGdfXTmaBskaN1dd";
+    private final String secretKey = "Yx3fMQaa7tUvF0Z5kWMjF0vzGyXXJ5L5Wf2YTKfL";
 
     @Value("${destPath}")
     private String destPath;
